@@ -10,6 +10,12 @@ public class Cliente {
 
     private List<Endereco> enderecos;
 
+    public Cliente(String nome, String cpf, List<Endereco> enderecos) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.enderecos = enderecos;
+    }
+
     public String getNome() {
         return nome;
     }

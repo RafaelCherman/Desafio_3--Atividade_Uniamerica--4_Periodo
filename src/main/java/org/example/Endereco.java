@@ -6,6 +6,11 @@ public class Endereco {
 
     private String rua;
 
+    public Endereco(int numero, String rua) {
+        this.numero = numero;
+        this.rua = rua;
+    }
+
     public int getNumero() {
         return numero;
     }
