@@ -400,6 +400,7 @@ public class Main {
                 FileWriter arqW = new FileWriter("pedido" + pedido.getNumeroPedido() + ".txt");
                 arqW.write("Nome do Cliente: " + pedido.getCliente().getNome());
                 arqW.write("Endereço da entrega: " + pedido.getEnderecoEntrega());
+                arqW.close();
             }
         } catch (IOException e) {
             System.out.println("An error occurred.");
