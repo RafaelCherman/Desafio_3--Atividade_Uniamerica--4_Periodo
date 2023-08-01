@@ -1,16 +1,21 @@
 package org.example;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
+    static Scanner ler = new Scanner(System.in);
+
     public static void main(String[] args) {
 
         List<Cliente> cadatrados = new ArrayList<>();
         List<Pedido> pedidos = new ArrayList<>();
         int ndp = 0;
-        Scanner ler = new Scanner(System.in);
         int index;
         int opc = 0;
 
@@ -51,6 +56,7 @@ public class Main {
                     break;
 
                 case 4:
+                    finalizar(pedidos);
                     break;
 
                 case 5:
@@ -79,7 +85,6 @@ public class Main {
 
     public static Cliente cadastrar(){
 
-        Scanner ler = new Scanner(System.in);
         String nome;
         String rua;
         String cpf;
@@ -110,7 +115,6 @@ public class Main {
         String cpf;
         int i;
         boolean achou = false;
-        Scanner ler = new Scanner(System.in);
         System.out.println("Digite o CPF");
         cpf = ler.next();
 
@@ -139,7 +143,6 @@ public class Main {
 
     public static void alterarCliente(Cliente cliente)
     {
-        Scanner ler = new Scanner(System.in);
         int opc, opcEd;
         String nome;
         String cpf;
@@ -169,7 +172,6 @@ public class Main {
 
     public static List<Endereco> alterarEnderecos(List<Endereco> enderecos)
     {
-        Scanner ler = new Scanner(System.in);
         int opc = 0;
         int index;
         String rua;
@@ -192,16 +194,10 @@ public class Main {
                     break;
 
                 case 2:
-                    for(int i = 0;i<enderecos.size();i++)
-                    {
-                        System.out.println((i+1) + "-" + " Rua: " + enderecos.get(i).getRua() + " - Numero: " + enderecos.get(i).getNumero());
-                    }
-                    System.out.println("Digite a opção do endereço que deseja remover");
-                    index = ler.nextInt();
-                    if( (index-1) > -1 && (index-1) < (enderecos.size()-1) )
-                    {
-                        enderecos.remove((index-1));
-                    }
+                    index = escolheEndereco(enderecos);
+
+                    enderecos.remove((index-1));
+
                     break;
 
                 case 3:
@@ -214,10 +210,30 @@ public class Main {
         return enderecos;
     }
 
+    public static int escolheEndereco(List<Endereco> enderecos)
+    {
+        int index = -1;
+        boolean loop = true;
+        while (loop) {
+            for (int i = 0; i < enderecos.size(); i++) {
+                System.out.println((i + 1) + "-" + " Rua: " + enderecos.get(i).getRua() + " - Numero: " + enderecos.get(i).getNumero());
+            }
+            System.out.println("Digite a opção do endereço que deseja remover");
+            index = ler.nextInt();
+            if(index-1 > -1 && index-1 < enderecos.size())
+            {
+                System.out.println("Endereço invalido");
+                loop = false;
+                break;
+            }
+        }
+
+        return index;
+    }
+
     public static List<Pizza> realizarPedido(){
         List<Pizza> pizzas = new ArrayList<>();
         String[] tamanhos = {"Pequena", "Media", "Grande"};
-        Scanner ler = new Scanner(System.in);
         int opc;
         int sair = 1;
         while (sair != 2)
@@ -228,12 +244,17 @@ public class Main {
             System.out.println("3-Grande");
             opc = ler.nextInt();
 
-            List<String> sabores = escolherSabores();
-            pizzas.add(new Pizza(tamanhos[opc-1], sabores));
+            if(opc > 0 && opc < 4) {
+                List<String> sabores = escolherSabores();
+                pizzas.add(new Pizza(tamanhos[opc - 1], sabores));
 
-            System.out.println("Montar outra pizza? 1-Sim  2-Não");
-            sair = ler.nextInt();
-
+                System.out.println("Montar outra pizza? 1-Sim  2-Não");
+                sair = ler.nextInt();
+            }
+            else
+            {
+                System.out.println("Tamanho invalido");
+            }
         }
 
         return pizzas;
@@ -242,7 +263,6 @@ public class Main {
     public static List<String> escolherSabores(){
         List<String> sabores = new ArrayList<>();
         String[] opcoes = {"Calabresa", "Frango", "Queijo", "Milho"};
-        Scanner ler = new Scanner(System.in);
         int opc;
         int sair = 1;
 
@@ -255,10 +275,15 @@ public class Main {
             System.out.println("4-Milho");
             opc = ler.nextInt();
 
-            sabores.add(opcoes[opc-1]);
+            if(opc > 0 && opc < 5) {
+                sabores.add(opcoes[opc - 1]);
 
-            System.out.println("Escolher outro sabor? 1-Sim  2-Não");
-            sair = ler.nextInt();
+                System.out.println("Escolher outro sabor? 1-Sim  2-Não");
+                sair = ler.nextInt();
+            }
+            else {
+                System.out.println("Sabor invalido");
+            }
         }
 
         return sabores;
@@ -348,14 +373,16 @@ public class Main {
 
     public static void finalizar(List<Pedido> pedidos)
     {
-        Scanner ler = new Scanner(System.in);
         int index;
+        int indexEnd;
         andamento(pedidos);
         System.out.println("Digite o numero do pedido que deseja finalizar");
         index = ler.nextInt();
         if(index > -1 && index < pedidos.size() && pedidos.get(index).isEmAndamento())
         {
+            indexEnd = escolheEndereco(pedidos.get(index).getCliente().getEnderecos());
             pedidos.get(index).setEmAndamento(false);
+            pedidos.get(index).setEnderecoEntrega(pedidos.get(index).getCliente().getEnderecos().get(indexEnd));
             criaTxt(pedidos.get(index));
         }
         else
@@ -367,9 +394,19 @@ public class Main {
 
     public static void criaTxt(Pedido pedido)
     {
-
+        try {
+            File arq = new File("pedido" + pedido.getNumeroPedido() + ".txt");
+            if (arq.createNewFile()) {
+                FileWriter arqW = new FileWriter("pedido" + pedido.getNumeroPedido() + ".txt");
+                arqW.write("Nome do Cliente: " + pedido.getCliente().getNome());
+                arqW.write("Endereço da entrega: " + pedido.getEnderecoEntrega());
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
     }
-    
+
 
 
 }

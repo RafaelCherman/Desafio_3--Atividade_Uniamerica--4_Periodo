@@ -11,6 +11,8 @@ public class Pedido {
 
     private boolean emAndamento;
 
+    private Endereco enderecoEntrega;
+
     public Pedido(int numeroPedido, List<Pizza> ordens, Cliente cliente, boolean emAndamento) {
         this.numeroPedido = numeroPedido;
         this.ordens = ordens;
@@ -48,5 +50,13 @@ public class Pedido {
 
     public void setEmAndamento(boolean emAndamento) {
         this.emAndamento = emAndamento;
+    }
+
+    public Endereco getEnderecoEntrega() {
+        return enderecoEntrega;
+    }
+
+    public void setEnderecoEntrega(Endereco enderecoEntrega) {
+        this.enderecoEntrega = enderecoEntrega;
     }
 }
