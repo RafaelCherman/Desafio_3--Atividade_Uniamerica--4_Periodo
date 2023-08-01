@@ -4,17 +4,33 @@ import java.util.List;
 
 public class Pedido {
 
-    private List<String> ordens;
+    private int numeroPedido;
+    private List<Pizza> ordens;
 
     private Cliente cliente;
 
     private boolean emAndamento;
 
-    public List<String> getOrdens() {
+    public Pedido(int numeroPedido, List<Pizza> ordens, Cliente cliente, boolean emAndamento) {
+        this.numeroPedido = numeroPedido;
+        this.ordens = ordens;
+        this.cliente = cliente;
+        this.emAndamento = emAndamento;
+    }
+
+    public int getNumeroPedido() {
+        return numeroPedido;
+    }
+
+    public void setNumeroPedido(int numeroPedido) {
+        this.numeroPedido = numeroPedido;
+    }
+
+    public List<Pizza> getOrdens() {
         return ordens;
     }
 
-    public void setOrdens(List<String> ordens) {
+    public void setOrdens(List<Pizza> ordens) {
         this.ordens = ordens;
     }
 

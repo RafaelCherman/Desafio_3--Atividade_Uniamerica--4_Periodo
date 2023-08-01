@@ -8,6 +8,8 @@ public class Main {
     public static void main(String[] args) {
 
         List<Cliente> cadatrados = new ArrayList<>();
+        List<Pedido> pedidos = new ArrayList<>();
+        int ndp = 0;
         Scanner ler = new Scanner(System.in);
         int index;
         int opc = 0;
@@ -19,8 +21,8 @@ public class Main {
             System.out.println("3 - Registrar um pedido");
             System.out.println("4 - Finalizar um pedido");
             System.out.println("5 - Imprimir todos pedidos");
-            System.out.println("6 - Imprimir pedidos em andamento");
-            System.out.println("7 - Imprimir pedidos encerrados");
+            System.out.println("6 - Imprimir pedidos encerrados");
+            System.out.println("7 - Imprimir pedidos em andamento");
             System.out.println("8 - Sair");
             opc = ler.nextInt();
 
@@ -39,18 +41,28 @@ public class Main {
                     break;
 
                 case 3:
+                    List<Pizza> pizzas = realizarPedido();
+                    index = exibir(cadatrados);
+                    if(index > -1)
+                    {
+                        pedidos.add(new Pedido(ndp, pizzas, cadatrados.get(index), true));
+                    }
+                    ndp += 1;
                     break;
 
                 case 4:
                     break;
 
                 case 5:
+                    todos(pedidos);
                     break;
 
                 case 6:
+                    encerrados(pedidos);
                     break;
 
                 case 7:
+                    andamento(pedidos);
                     break;
 
                 case 8:
@@ -201,6 +213,163 @@ public class Main {
         }
         return enderecos;
     }
+
+    public static List<Pizza> realizarPedido(){
+        List<Pizza> pizzas = new ArrayList<>();
+        String[] tamanhos = {"Pequena", "Media", "Grande"};
+        Scanner ler = new Scanner(System.in);
+        int opc;
+        int sair = 1;
+        while (sair != 2)
+        {
+            System.out.println("Escolha o tamanho da pizza");
+            System.out.println("1-Pequena");
+            System.out.println("2-Media");
+            System.out.println("3-Grande");
+            opc = ler.nextInt();
+
+            List<String> sabores = escolherSabores();
+            pizzas.add(new Pizza(tamanhos[opc-1], sabores));
+
+            System.out.println("Montar outra pizza? 1-Sim  2-Não");
+            sair = ler.nextInt();
+
+        }
+
+        return pizzas;
+    }
+
+    public static List<String> escolherSabores(){
+        List<String> sabores = new ArrayList<>();
+        String[] opcoes = {"Calabresa", "Frango", "Queijo", "Milho"};
+        Scanner ler = new Scanner(System.in);
+        int opc;
+        int sair = 1;
+
+        while (sair != 2)
+        {
+            System.out.println("Escolha o tamanho da pizza");
+            System.out.println("1-Calabresa");
+            System.out.println("2-Frango");
+            System.out.println("3-Queijo");
+            System.out.println("4-Milho");
+            opc = ler.nextInt();
+
+            sabores.add(opcoes[opc-1]);
+
+            System.out.println("Escolher outro sabor? 1-Sim  2-Não");
+            sair = ler.nextInt();
+        }
+
+        return sabores;
+    }
+
+    public static void todos(List<Pedido> pedidos)
+    {
+        for(Pedido i : pedidos)
+        {
+            System.out.println("Numero do pedido: " + i.getNumeroPedido());
+            System.out.println("Cliente: " + i.getCliente().getNome());
+            if(i.isEmAndamento())
+            {
+                System.out.println("Status: Em Andamento");
+            }
+            else
+            {
+                System.out.println("Status: Encerrado");
+            }
+            System.out.println("Pizzas");
+            for(Pizza j : i.getOrdens())
+            {
+                System.out.println("Tamanho: ");
+                System.out.println("Sabores: ");
+                for (String y : j.getSabores())
+                {
+                    System.out.print(y + " ");
+                }
+            }
+
+        }
+    }
+
+    public static void encerrados(List<Pedido> pedidos)
+    {
+        for(Pedido i : pedidos)
+        {
+            if(!i.isEmAndamento())
+            {
+
+                System.out.println("Numero do pedido: " + i.getNumeroPedido());
+                System.out.println("Cliente: " + i.getCliente().getNome());
+
+                System.out.println("Status: Encerrado");
+
+                System.out.println("Pizzas");
+                for(Pizza j : i.getOrdens())
+                {
+                    System.out.println("Tamanho: ");
+                    System.out.println("Sabores: ");
+                    for (String y : j.getSabores())
+                    {
+                        System.out.print(y + " ");
+                    }
+                }
+            }
+        }
+    }
+
+    public static void andamento(List<Pedido> pedidos)
+    {
+        for(Pedido i : pedidos)
+        {
+            if(i.isEmAndamento())
+            {
+
+                System.out.println("Numero do pedido: " + i.getNumeroPedido());
+                System.out.println("Cliente: " + i.getCliente().getNome());
+
+                System.out.println("Status: Em Andamento");
+
+                System.out.println("Pizzas");
+                for(Pizza j : i.getOrdens())
+                {
+                    System.out.println("Tamanho: ");
+                    System.out.println("Sabores: ");
+                    for (String y : j.getSabores())
+                    {
+                        System.out.print(y + " ");
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    public static void finalizar(List<Pedido> pedidos)
+    {
+        Scanner ler = new Scanner(System.in);
+        int index;
+        andamento(pedidos);
+        System.out.println("Digite o numero do pedido que deseja finalizar");
+        index = ler.nextInt();
+        if(index > -1 && index < pedidos.size() && pedidos.get(index).isEmAndamento())
+        {
+            pedidos.get(index).setEmAndamento(false);
+            criaTxt(pedidos.get(index));
+        }
+        else
+        {
+            System.out.println("Pedido não existe ou já foi encerrado");
+        }
+
+    }
+
+    public static void criaTxt(Pedido pedido)
+    {
+
+    }
+    
 
 
 }
