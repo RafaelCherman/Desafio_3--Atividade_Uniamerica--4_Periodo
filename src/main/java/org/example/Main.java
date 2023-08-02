@@ -15,7 +15,7 @@ public class Main {
 
         List<Cliente> cadatrados = new ArrayList<>();
         List<Pedido> pedidos = new ArrayList<>();
-        int ndp = 0;
+        int ndp = 1;
         int index;
         int opc = 0;
 
@@ -115,7 +115,7 @@ public class Main {
         String cpf;
         int i;
         boolean achou = false;
-        System.out.println("Digite o CPF");
+        System.out.println("Digite o CPF do Cliente");
         cpf = ler.next();
 
         for(i=0;i<clientes.size();i++)
@@ -153,7 +153,7 @@ public class Main {
         {
             System.out.println("Digite o nome");
             nome = ler.next();
-            System.out.println("Digite o cpf");
+            System.out.println("Digite o CPF");
             cpf = ler.next();
             System.out.println("Deseja alterar endereços? 1-Sim  2-Não");
             opcEd = ler.nextInt();
@@ -196,7 +196,7 @@ public class Main {
                 case 2:
                     index = escolheEndereco(enderecos);
 
-                    enderecos.remove((index-1));
+                    enderecos.remove((index));
 
                     break;
 
@@ -218,17 +218,21 @@ public class Main {
             for (int i = 0; i < enderecos.size(); i++) {
                 System.out.println((i + 1) + "-" + " Rua: " + enderecos.get(i).getRua() + " - Numero: " + enderecos.get(i).getNumero());
             }
-            System.out.println("Digite a opção do endereço que deseja remover");
+            System.out.println("Escolha um endereço para realizar a ação");
             index = ler.nextInt();
             if(index-1 > -1 && index-1 < enderecos.size())
             {
-                System.out.println("Endereço invalido");
+                System.out.println("Endereço escolhido rua " + enderecos.get(index-1).getRua() + " Numero " + enderecos.get(index-1).getNumero());
                 loop = false;
                 break;
             }
+            else
+            {
+                System.out.println("Endereço invalido");
+            }
         }
 
-        return index;
+        return index-1;
     }
 
     public static List<Pizza> realizarPedido(){
@@ -268,7 +272,7 @@ public class Main {
 
         while (sair != 2)
         {
-            System.out.println("Escolha o tamanho da pizza");
+            System.out.println("Escolha um sabor para pizza");
             System.out.println("1-Calabresa");
             System.out.println("2-Frango");
             System.out.println("3-Queijo");
@@ -306,12 +310,14 @@ public class Main {
             System.out.println("Pizzas");
             for(Pizza j : i.getOrdens())
             {
-                System.out.println("Tamanho: ");
-                System.out.println("Sabores: ");
+                System.out.print("Tamanho: ");
+                System.out.print(j.getTamanho() + " ");
+                System.out.print("Sabores: ");
                 for (String y : j.getSabores())
                 {
                     System.out.print(y + " ");
                 }
+                System.out.println("\n");
             }
 
         }
@@ -332,12 +338,14 @@ public class Main {
                 System.out.println("Pizzas");
                 for(Pizza j : i.getOrdens())
                 {
-                    System.out.println("Tamanho: ");
-                    System.out.println("Sabores: ");
+                    System.out.print("Tamanho: ");
+                    System.out.print(j.getTamanho() + " ");
+                    System.out.print("Sabores: ");
                     for (String y : j.getSabores())
                     {
                         System.out.print(y + " ");
                     }
+                    System.out.println("\n");
                 }
             }
         }
@@ -358,12 +366,14 @@ public class Main {
                 System.out.println("Pizzas");
                 for(Pizza j : i.getOrdens())
                 {
-                    System.out.println("Tamanho: ");
-                    System.out.println("Sabores: ");
+                    System.out.print("Tamanho: ");
+                    System.out.print(j.getTamanho() + " ");
+                    System.out.print("Sabores: ");
                     for (String y : j.getSabores())
                     {
                         System.out.print(y + " ");
                     }
+                    System.out.println("\n");
                 }
             }
 
@@ -378,12 +388,12 @@ public class Main {
         andamento(pedidos);
         System.out.println("Digite o numero do pedido que deseja finalizar");
         index = ler.nextInt();
-        if(index > -1 && index < pedidos.size() && pedidos.get(index).isEmAndamento())
+        if((index-1) > -1 && (index-1) < pedidos.size() && pedidos.get((index-1)).isEmAndamento())
         {
-            indexEnd = escolheEndereco(pedidos.get(index).getCliente().getEnderecos());
-            pedidos.get(index).setEmAndamento(false);
-            pedidos.get(index).setEnderecoEntrega(pedidos.get(index).getCliente().getEnderecos().get(indexEnd));
-            criaTxt(pedidos.get(index));
+            indexEnd = escolheEndereco(pedidos.get((index-1)).getCliente().getEnderecos());
+            pedidos.get((index-1)).setEmAndamento(false);
+            pedidos.get((index-1)).setEnderecoEntrega(pedidos.get((index-1)).getCliente().getEnderecos().get(indexEnd));
+            criaTxt(pedidos.get((index-1)));
         }
         else
         {
@@ -398,8 +408,8 @@ public class Main {
             File arq = new File("pedido" + pedido.getNumeroPedido() + ".txt");
             if (arq.createNewFile()) {
                 FileWriter arqW = new FileWriter("pedido" + pedido.getNumeroPedido() + ".txt");
-                arqW.write("Nome do Cliente: " + pedido.getCliente().getNome());
-                arqW.write("Endereço da entrega: " + pedido.getEnderecoEntrega());
+                arqW.write("Nome do Cliente: " + pedido.getCliente().getNome() + "\n");
+                arqW.write("Endereço da entrega: " + pedido.getEnderecoEntrega().getNumero() + " Rua: " + pedido.getEnderecoEntrega().getRua());
                 arqW.close();
             }
         } catch (IOException e) {
